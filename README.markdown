@@ -1,42 +1,103 @@
-# 2D Fighting Game with Nemesis System
 
-## Overview
-This is a 2D fighting game built in Python using the Raylib library (`raylibpy`). It features a player-controlled character and a CPU opponent with an adaptive "Nemesis System" that adjusts the CPU's strategy based on the player's actions. The game includes multiple rounds, health bars, combo counters, screen shake effects, and audio integration. For a detailed analysis, refer to the [summary PDF](FightingGameAnalysis.pdf).
+# Gesture-Controlled 2D Fighting Game with Nemesis AI
 
-## Installation
-1. **Prerequisites**:
-   - Python 3.x
-   - Raylib Python bindings (`raylibpy`): Install via `pip install raylib`.
-   - Ensure all texture and audio files are in the correct directory structure (e.g., `player movement/`, `cpu/`, root for `b.mp3`, `p1.mp3`, `p2.mp3`, `flore.jpg`).
+This is a **2D fighting game** built using **Python**, **Raylib**, **OpenCV**, and **MediaPipe**.  
+It combines **gesture-based controls** with a **custom Nemesis AI system** that adapts to your playstyle, making every match dynamic and challenging.
 
-2. **Setup**:
-   - Clone or download the repository.
-   - Update file paths in `game.py` to match your local directory structure (e.g., replace `D:\programs\c++\games\game_5\` with relative paths).
-   - Run the game: `python game.py`.
+---
 
-## Controls
-- **Movement**:
-  - `A`: Move left
-  - `D`: Move right
-  - `W`: Jump
-  - `S`: Crouch
-- **Actions**:
-  - `K`: Punch (combine with `A`, `D`, `W`, `S` for variations)
-  - `L`: Kick (combine with `A`, `D`, `W`, `S` for variations)
-  - `SPACE`: Block
-- **Debug**:
-  - `R`: Reset move log (`player_moves.txt`)
+## 🎮 Features
 
-## Features
-- **Gameplay**: Fight in rounds (best-of-three) with health bars and combo counters.
-- **Nemesis System**: CPU adapts to player actions by analyzing moves logged in `player_moves.txt`.
-- **Visuals**: Screen shake, particle effects, and state-based character animations.
-- **Audio**: Background music and hit sound effects.
+### **1. Adaptive Nemesis AI**
+Inspired by the **Nemesis System** (*Shadow of Mordor*), but redesigned for a 2D fighting game.
 
-## Notes
-- Ensure all asset files (textures, audio) are accessible to avoid crashes.
-- The game uses absolute file paths, which may need adjustment for portability.
-- For a comprehensive analysis, including strengths, issues, and improvement suggestions, see the [summary PDF](FightingGameAnalysis.pdf).
+#### **How It Works:**
+1. **Action Logging**: Every move you perform (punch, kick, block, jump, crouch, movement) is **logged with timestamps** into a file.
+2. **Pattern Analysis**: The system looks at your **last 100 actions** and identifies which move you use most often (e.g., punch spam).
+3. **Counter-Strategy Update**: The CPU dynamically **increases the probability** of countering your most used actions. For example:
+   - If you throw many punches → CPU will block more and use counter-kicks.
+   - If you rely on kicks → CPU adjusts to block low and punch more.
+4. **Continuous Learning**: This analysis runs **every 10 seconds** during gameplay and at the end of each round, making the CPU **progressively smarter**.
 
-## License
-This project is unlicensed. Use and modify at your own discretion.
+This approach creates a **reactive and evolving CPU opponent** without requiring heavy machine learning models.
+
+---
+
+### **2. Gesture-Based Controls with OpenCV + MediaPipe**
+Ditch the keyboard — **your body becomes the controller**.
+
+#### **How It Works:**
+- **Webcam Capture**: OpenCV continuously captures frames from your webcam.
+- **Pose Estimation**: MediaPipe detects key body points like **nose, wrists, knees**.
+- **Hand Tracking**: MediaPipe Hands identifies **fingers and hand openness**.
+- **Smoothed Detection**: To prevent false triggers, a **buffer (deque)** stores recent positions and calculates movement speed.
+
+#### **Gesture Mapping:**
+- **Punch**: Fast horizontal movement of wrists.
+- **Kick**: Quick vertical movement of knees.
+- **Block**: Wrists brought close together.
+- **Jump/Crouch**: Nose position crossing threshold lines relative to a neutral stance.
+- **Move Left/Right**: Open hand detected on respective sides of the frame.
+
+#### **Why It’s Effective:**
+- **Low-latency tracking** using MediaPipe’s efficient ML models.
+- **Smoothed actions** reduce noise and unintentional moves.
+- **Natural gameplay**: Movements feel intuitive and immersive.
+
+---
+
+## 🖥 Game Mechanics
+- 3-round match system.
+- **Combo counter**, **particle effects**, **screen shake** for impactful hits.
+- **Health regeneration** for CPU when idle.
+- **Dynamic animations** for various states (idle, jump, crouch, attack).
+- **Sound effects** and **background music** for full immersion.
+
+---
+
+## 📚 Requirements
+- Python 3.8+
+- [RaylibPy](https://github.com/overdev/raylib-py)
+- [OpenCV](https://opencv.org/)
+- [MediaPipe](https://developers.google.com/mediapipe)
+- Numpy
+
+Install dependencies:
+```bash
+pip install raylib-py opencv-python mediapipe numpy
+```
+
+---
+
+## ▶️ Running the Game
+1. Clone this repository:
+```bash
+git clone https://github.com/yourusername/gesture-fighter.git
+cd gesture-fighter
+```
+2. Run the game:
+```bash
+python game2.py
+```
+Make sure your **webcam** is connected for gesture tracking.
+
+---
+
+## 🔮 Future Improvements
+- **Calibration phase** for gesture detection (adjust thresholds per player).
+- **Advanced AI** using Markov chains or reinforcement learning.
+- **Multiplayer mode**.
+- **Special gesture-triggered super moves**.
+- **Enhanced graphics and UI**.
+
+---
+
+## 🛠 Credits
+Developed through **research, experimentation, and creative problem-solving**.  
+All Nemesis logic, gesture integration, and gameplay mechanics are custom-built by analyzing multiple approaches and molding them into a unique design.
+
+---
+
+## 📜 License
+MIT License – Free to use and modify.
+
