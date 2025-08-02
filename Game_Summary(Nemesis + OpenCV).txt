@@ -1,0 +1,81 @@
+
+# Summary of Game2: Gesture-Controlled 2D Fighting Game with Nemesis AI
+
+## Overview
+This project is a 2D fighting game built in Python using Raylib for rendering and input handling, OpenCV + MediaPipe for body tracking, and a custom adaptive CPU opponent modeled after the Nemesis system. The game combines gesture-based controls with a reactive AI to create an immersive and evolving gameplay experience.
+
+---
+
+## Key Features
+1. **Nemesis AI (Adaptive CPU)**
+   - Logs the last 100 player moves (punch, kick, block, jump, crouch, movement).
+   - Analyzes frequent patterns to determine the dominant action.
+   - Updates CPU strategy dynamically, adjusting probabilities to counter player habits.
+   - Uses a lightweight pattern-based model (regression-based adjustments) to make decisions.
+   
+2. **Gesture-Based Controls**
+   - Uses OpenCV + MediaPipe to track:
+     - **Punches**: Detected by fast wrist movements.
+     - **Kicks**: Detected by fast knee movements.
+     - **Jump/Crouch**: Based on head (nose) position relative to predefined thresholds.
+     - **Block**: Detected when both wrists come close together.
+     - **Movement**: Detected by hand openness and position (move left/right).
+   - Body tracking runs in a separate thread for real-time performance.
+
+3. **Game Mechanics**
+   - 3-round match system.
+   - Combo counters, particle effects, and screen shake for impactful feedback.
+   - Health regeneration for CPU when idle.
+   - Adaptive animations based on state (idle, jump, crouch, punch, kick, block).
+   - Dynamic sound effects and background music.
+
+4. **Technical Aspects**
+   - **RaylibPy**: For rendering, audio, and game logic.
+   - **OpenCV**: Captures real-time webcam input for gesture detection.
+   - **MediaPipe**: Provides pose and hand landmarks for accurate tracking.
+   - **Threading**: Body tracking runs in parallel with the game loop.
+   - **Nemesis System**: Logs player moves to a file and uses this data for adaptive gameplay.
+
+---
+
+## How the Nemesis System Works
+1. **Move Logging**: Each player action is logged to a file with a timestamp.
+2. **Analysis**: After a round loss or every 10 seconds, the AI reads the last 100 actions.
+3. **Dominant Action Detection**: If one action appears at least 10 times, it is flagged as dominant.
+4. **Strategy Update**: AI modifies its state machine probabilities to counter the dominant action.
+   - E.g., If the player spams punches → AI increases blocking and counter-kicks.
+5. **Dynamic Learning**: Over time, the CPU "profiles" the player and adjusts accordingly.
+
+---
+
+## How Gesture Tracking Works
+1. **Pose Estimation**: Detects key body points (nose, wrists, knees).
+2. **Hand Tracking**: Detects fingers and hand openness.
+3. **Action Detection**:
+   - Punch: Sudden horizontal wrist movement.
+   - Kick: Vertical knee movement.
+   - Jump/Crouch: Head (nose) crosses threshold lines.
+   - Block: Wrists come close together.
+   - Move Left/Right: Open hands detected on respective screen sides.
+4. **Smoothed Movement**: Uses history buffers (deque) for stable gesture detection.
+
+---
+
+## Strengths
+- Highly immersive: Combines AI adaptation with gesture control.
+- Modular code: Easily extendable for new moves or AI enhancements.
+- Multithreaded: Smooth performance even with body tracking.
+
+---
+
+## Limitations & Future Improvements
+- **Glitches**: Occasional false positives in gesture detection.
+- **Calibration**: Fixed thresholds; could benefit from an in-game calibration phase.
+- **AI Depth**: Currently pattern-based; could be expanded with Markov chains or reinforcement learning.
+- **Graphics**: Functional but basic (focus was on gameplay mechanics).
+
+---
+
+## Conclusion
+This game demonstrates how **simple AI models** and **computer vision** can significantly enhance traditional game design. By combining the **Nemesis concept** with **real-time body tracking**, the project delivers a unique and evolving fighting game experience.
+
